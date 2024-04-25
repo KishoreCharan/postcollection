@@ -1,0 +1,66 @@
+{
+	"info": {
+		"_postman_id": "7acd7b77-4ba4-4af6-9c39-358baae0ae7a",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34212745"
+	},
+	"item": [
+		{
+			"name": "esrfdsadf",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "esrfdsadf",
+					"host": [
+						"esrfdsadf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "esrfdsadf Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "esrfdsadf",
+					"host": [
+						"esrfdsadf"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
