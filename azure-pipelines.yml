@@ -1,0 +1,38 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '14.x'  # Specify the version of Node.js you need
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install -g newman
+  displayName: 'Install Newman'
+
+- script: |
+    newman run $(Build.SourcesDirectory)/path/to/your/PostmanCollection.json --reporters cli,junit --reporter-junit-export $(Build.ArtifactStagingDirectory)/results.xml
+  displayName: 'Run Postman Collection'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '$(Build.ArtifactStagingDirectory)/results.xml'
+    testRunTitle: 'Postman Tests'
+  condition: succeededOrFailed()  # Ensure results are published even if tests fail
