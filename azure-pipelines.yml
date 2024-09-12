@@ -5,7 +5,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# Build the project and generate the .war file
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
@@ -13,22 +12,14 @@ steps:
     options: '-DskipTests'
   displayName: 'Build WAR File'
 
-# Ensure .war file is in the artifact staging directory
-- script: |
-    mkdir -p $(Build.ArtifactStagingDirectory)
-    cp target/*.war $(Build.ArtifactStagingDirectory)
-  displayName: 'Move WAR file to Artifact Staging Directory'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '$(Build.ArtifactStagingDirectory)/results.xml'
+    testRunTitle: 'Postman Tests'
+  condition: succeededOrFailed()  # Ensure results are published even if tests fail
 
-# Optionally, you can list files for debugging
-- script: |
-    echo "Listing files in the artifact staging directory:"
-    ls -R $(Build.ArtifactStagingDirectory)
-  displayName: 'Debug file locations'
-
-# Publish the .war file as an artifact
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'  # Adjust if necessary
     ArtifactName: 'drop'
     publishLocation: 'Container'
-  displayName: 'Publish WAR file as Artifact'
