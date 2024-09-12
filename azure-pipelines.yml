@@ -1,16 +1,33 @@
 trigger:
-- main
+- main  # Adjust this to your branch if necessary
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-latest'  # Change to 'windows-latest' if needed
 
 steps:
-- task: Maven@3
+- task: NodeTool@0
   inputs:
-    mavenPomFile: 'pom.xml'
-    goals: 'package'
-    options: '-DskipTests'
-  displayName: 'Build WAR File'
+    versionSpec: '16.x'  # Update to Node.js version 16 or higher
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install -g newman
+  displayName: 'Install Newman'
+
+- script: |
+    ls -R $(Build.SourcesDirectory)
+  displayName: 'List files in source directory'
+
+- script: |
+    newman run $(Build.SourcesDirectory)/Kishore.postman_collection.json --reporters cli,junit --reporter-junit-export $(Build.ArtifactStagingDirectory)/results.xml
+  displayName: 'Run Postman Collection'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'  # Adjust the path to where your .war file is located
+    Contents: '**/*.war'  # Matches all .war files
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/war-directory'  # Define your target directory
+  displayName: 'Copy .war file to directory'
 
 - task: PublishTestResults@2
   inputs:
@@ -18,8 +35,10 @@ steps:
     testRunTitle: 'Postman Tests'
   condition: succeededOrFailed()  # Ensure results are published even if tests fail
 
-- task: PublishBuildArtifacts@1
+- task: PublishPipelineArtifact@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'  # Adjust if necessary
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'PostmanResults'
+  displayName: 'Publish Artifacts'
+
+
