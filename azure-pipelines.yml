@@ -22,12 +22,22 @@ steps:
     newman run $(Build.SourcesDirectory)/Kishore.postman_collection.json --reporters cli,junit --reporter-junit-export $(Build.ArtifactStagingDirectory)/results.xml
   displayName: 'Run Postman Collection'
 
+# Ensure the directory for the .war file exists
+- script: |
+    mkdir -p $(Build.ArtifactStagingDirectory)/war-directory
+  displayName: 'Create target directory for .war file'
+
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Build.SourcesDirectory)'  # Adjust the path to where your .war file is located
     Contents: '**/*.war'  # Matches all .war files
     TargetFolder: '$(Build.ArtifactStagingDirectory)/war-directory'  # Define your target directory
   displayName: 'Copy .war file to directory'
+
+# Verify that the .war file has been copied
+- script: |
+    ls -R $(Build.ArtifactStagingDirectory)/war-directory
+  displayName: 'Verify .war file in target directory'
 
 - task: PublishTestResults@2
   inputs:
@@ -40,5 +50,3 @@ steps:
     targetPath: '$(Build.ArtifactStagingDirectory)/war-directory'  # The directory where the .war file is stored
     artifactName: 'WARFile'
   displayName: 'Publish .war file as Artifact'
-
-
