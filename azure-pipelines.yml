@@ -13,6 +13,9 @@ steps:
 - script: |
     npm install -g newman
   displayName: 'Install Newman'
+- script: |
+    ls -R $(Build.SourcesDirectory)
+  displayName: 'List files in source directory'
 
 - script: |
     newman run $(Build.SourcesDirectory)/path/to/your/PostmanCollection.json --reporters cli,junit --reporter-junit-export $(Build.ArtifactStagingDirectory)/results.xml
