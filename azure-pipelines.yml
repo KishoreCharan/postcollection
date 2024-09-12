@@ -26,10 +26,12 @@ steps:
     testResultsFiles: '$(Build.ArtifactStagingDirectory)/results.xml'
     testRunTitle: 'Postman Tests'
   condition: succeededOrFailed()  # Ensure results are published even if tests fail
-- script: ls -R $(Build.ArtifactStagingDirectory)
-  displayName: 'List files in artifact staging directory'
+- script: |
+    ls -R $(Build.SourcesDirectory)/target
+  displayName: 'List files in the target directory'
+
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/target'
+    PathtoPublish: '$(Build.SourcesDirectory)/target'  # Ensure this path is correct
     ArtifactName: 'drop'
     publishLocation: 'Container'
