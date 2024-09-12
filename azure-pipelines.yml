@@ -18,7 +18,7 @@ steps:
   displayName: 'List files in source directory'
 
 - script: |
-    newman run $(Build.SourcesDirectory)/path/to/your/PostmanCollection.json --reporters cli,junit --reporter-junit-export $(Build.ArtifactStagingDirectory)/results.xml
+    newman run $(Build.SourcesDirectory)/Kishore.postman_collection.json --reporters cli,junit --reporter-junit-export $(Build.ArtifactStagingDirectory)/results.xml
   displayName: 'Run Postman Collection'
 
 - task: PublishTestResults@2
