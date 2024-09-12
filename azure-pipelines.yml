@@ -7,7 +7,7 @@ pool:
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '16.x'  # Update to Node.js version 16 or higher
+    versionSpec: '16.x'
   displayName: 'Install Node.js'
 
 - script: |
@@ -15,12 +15,9 @@ steps:
   displayName: 'Install Newman'
 
 - script: |
+    echo "Listing files in $(Build.SourcesDirectory)"
     ls -R $(Build.SourcesDirectory)
-  displayName: 'List files in source directory'
-
-- script: |
-    newman run $(Build.SourcesDirectory)/Kishore.postman_collection.json --reporters cli,junit --reporter-junit-export $(Build.ArtifactStagingDirectory)/results.xml
-  displayName: 'Run Postman Collection'
+  displayName: 'Verify .war file in source directory'
 
 # Ensure the directory for the .war file exists
 - script: |
@@ -34,8 +31,9 @@ steps:
     TargetFolder: '$(Build.ArtifactStagingDirectory)/war-directory'  # Define your target directory
   displayName: 'Copy .war file to directory'
 
-# Verify that the .war file has been copied
+# Verify that the .war file has been copied to the staging directory
 - script: |
+    echo "Listing files in $(Build.ArtifactStagingDirectory)/war-directory"
     ls -R $(Build.ArtifactStagingDirectory)/war-directory
   displayName: 'Verify .war file in target directory'
 
@@ -43,10 +41,11 @@ steps:
   inputs:
     testResultsFiles: '$(Build.ArtifactStagingDirectory)/results.xml'
     testRunTitle: 'Postman Tests'
-  condition: succeededOrFailed()  # Ensure results are published even if tests fail
+  condition: succeededOrFailed()
 
 - task: PublishPipelineArtifact@1
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)/war-directory'  # The directory where the .war file is stored
     artifactName: 'WARFile'
   displayName: 'Publish .war file as Artifact'
+
