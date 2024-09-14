@@ -7,23 +7,28 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: UseNode@1
-  inputs:
-    versionSpec: '16.x'
-  displayName: 'Install Node.js 16'
-
 - script: |
-    # Clear any cached Node.js versions
-    npm cache clean --force
+    # Install Node.js 16 manually
+    curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+    sudo apt-get install -y nodejs
     node --version
     npm --version
-  displayName: 'Check Node.js and npm Versions'
+  displayName: 'Install Node.js 16 Manually'
 
 - script: |
+    # Clear npm cache
+    npm cache clean --force
+  displayName: 'Clear npm Cache'
+
+- script: |
+    # Install Newman globally
     npm install -g newman
   displayName: 'Install Newman'
 
 - script: |
-    bash run-tests.sh
+    # Run the Postman collection with Newman
+    # Ensure collection.json and environment.json are in the correct paths
+    newman run collection.json -e environment.json --reporters cli,html --reporter-html-export newman-report.html
   displayName: 'Run Postman Tests'
+
 
