@@ -13,9 +13,17 @@ steps:
   displayName: 'Install Node.js 16'
 
 - script: |
+    # Clear any cached Node.js versions
+    npm cache clean --force
+    node --version
+    npm --version
+  displayName: 'Check Node.js and npm Versions'
+
+- script: |
     npm install -g newman
   displayName: 'Install Newman'
 
 - script: |
     bash run-tests.sh
   displayName: 'Run Postman Tests'
+
