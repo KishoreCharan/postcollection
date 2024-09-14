@@ -1,68 +1,21 @@
 trigger:
-- main
+  branches:
+    include:
+      - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# Install Node.js (for Newman, as in your original)
 - task: NodeTool@0
   inputs:
-    versionSpec: '16.x'
+    versionSpec: '14.x'
   displayName: 'Install Node.js'
 
-# Install Newman
 - script: |
     npm install -g newman
   displayName: 'Install Newman'
 
-# Run Postman Collection
 - script: |
-    newman run $(Build.SourcesDirectory)/Kishore.postman_collection.json --reporters cli,junit --reporter-junit-export $(Build.ArtifactStagingDirectory)/results.xml
-  displayName: 'Run Postman Collection'
-
-# Build .war file using Maven
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'  # Adjust if your pom.xml is not in the root
-    goals: 'clean package'
-  displayName: 'Build the .war file'
-
-# List files in target directory to verify .war file
-- script: |
-    echo "Listing files in $(Build.SourcesDirectory)/target"
-    ls -R $(Build.SourcesDirectory)/target
-  displayName: 'Verify .war file in target directory'
-
-# Create directory for copying .war file
-- script: |
-    mkdir -p $(Build.ArtifactStagingDirectory)/war-directory
-  displayName: 'Create target directory for .war file'
-
-# Copy .war file to the artifact staging directory
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)/target'  # Adjust this path
-    Contents: '**/*.war'  # Copy any .war file
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/war-directory'
-  displayName: 'Copy .war file to directory'
-
-# Verify that the .war file has been copied
-- script: |
-    echo "Listing files in $(Build.ArtifactStagingDirectory)/war-directory"
-    ls -R $(Build.ArtifactStagingDirectory)/war-directory
-  displayName: 'Verify .war file in target directory'
-
-# Publish Postman test results
-- task: PublishTestResults@2
-  inputs:
-    testResultsFiles: '$(Build.ArtifactStagingDirectory)/results.xml'
-    testRunTitle: 'Postman Tests'
-  condition: succeededOrFailed()
-
-# Publish the .war file as an artifact
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/war-directory'
-    artifactName: 'WARFile'
-  displayName: 'Publish .war file as Artifact'
+    bash run-tests.sh
+  displayName: 'Run Postman Tests'
