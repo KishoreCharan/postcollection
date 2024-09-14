@@ -3,6 +3,10 @@
 # Exit the script if any command fails
 set -e
 
+# Verify Node.js and npm versions
+node --version
+npm --version
+
 # Install Newman globally
 npm install -g newman
 
