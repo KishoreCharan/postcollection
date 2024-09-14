@@ -28,7 +28,7 @@ steps:
 - script: |
     # Run the Postman collection with Newman
     # Ensure collection.json and environment.json are in the correct paths
-    newman run collection.json --reporters cli,html --reporter-html-export newman-report.html
+    newman run Kishore.postman_collection.json --reporters cli,html --reporter-html-export newman-report.html
   displayName: 'Run Postman Tests'
 
 
